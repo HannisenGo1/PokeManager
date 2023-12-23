@@ -94,27 +94,25 @@ for (const addButton of addButtonList) {
 
 async function displayPokemon(pokemonList) {
   const searchForPokemonDiv = document.querySelector('.searchForPokemonDiv');
+  const addButtonList = [];
 
   for (const pokemonData of pokemonList) {
     const abilities = pokemonData.abilities || [];
     const championPokemonDiv = document.createElement('div');
     championPokemonDiv.classList.add('pokemon-enter');
 
-	const addButton = document.createElement('button');
+    const addButton = document.createElement('button');
     addButton.classList.add('add-champion-button');
     addButton.textContent = 'Add to Team';
     addButtonList.push(addButton);
-	addButton.addEventListener('click', function() {
-      const index = addButtonList.indexOf(addButton);
-      const selectedPokemon = pokemonList[index];
-      addChampionToTeam(selectedPokemon);
+
+    addButton.addEventListener('click', async function () {
+      addChampionToTeam(pokemonData);
     });
 
-    // Lägg till unik identifierare
     const uniqueId = pokemonData.name.toLowerCase();
     championPokemonDiv.setAttribute('id', uniqueId);
 
-    // Bildelement
     const imageUrl = pokemonData.SpritesUrl;
     const img = document.createElement('img');
     img.src = imageUrl;
@@ -125,34 +123,33 @@ async function displayPokemon(pokemonList) {
     rubrikPokemon.textContent = `Name: ${pokemonData.name}`;
     championPokemonDiv.appendChild(rubrikPokemon);
 
-    // Visa abilities på pokemonen
     const pokemonTypes = document.createElement('p');
     pokemonTypes.textContent = `Abilities: ${abilities.map((ability) => ability.ability.name).join(', ')}`;
     championPokemonDiv.appendChild(pokemonTypes);
 
-    // Lägg till championdiv i sökdiven
     searchForPokemonDiv.appendChild(championPokemonDiv);
 
-    // Knapp för att lägga till pokemonen
     const addPokemonsButton = document.createElement('button');
     addPokemonsButton.classList.add('addPokemonsbutton');
     addPokemonsButton.textContent = 'Add champions to team';
-
-    // Lägg till en unik klass för varje knapp baserat på Pokemonens namn
-    addPokemonsButton.classList.add(`add-button-${uniqueId}`);
-
     championPokemonDiv.appendChild(addPokemonsButton);
 
     const nicknameInput = document.createElement('input');
     nicknameInput.type = 'text';
     nicknameInput.placeholder = 'choose a nickname';
     championPokemonDiv.appendChild(nicknameInput);
-
-    addButtonList.push(addPokemonsButton);
   }
 
   return addButtonList;
 }
+    addButtonList.forEach((addButton, index) => {
+    addButton.addEventListener('click', async function () {
+      const selectedPokemon = pokemonList[index];
+      await fetchPokemonData([selectedPokemon]);
+      addpokemonToTeam();
+	
+    });
+  });
 
 
 

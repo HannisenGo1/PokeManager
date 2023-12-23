@@ -1,185 +1,216 @@
-import {maxTeam} from "./functionButtons.js";
-import { displayPokemon} from "./ajax.js"
-let membersPokemon= [];
+let img = document.createElement('img')
+let abilities = [];
 
-function getExistingReserveData() {
-  const existingReserveData = localStorage.getItem('myReserve');
-  return existingReserveData ? JSON.parse(existingReserveData) : [];
-}
-const existingReserveData = getExistingReserveData();
 
-export function addToTeam(pokemonData, nickname) {
-  const existingTeamData = getExistingTeamData(); 
-  const existingReserveData = getExistingReserveData(); 
-  if (existingTeamData.length < 3) {
-    
-    pokemonData.nickname = nickname;
-    existingTeamData.push(pokemonData);
-  } else {
-   
-    pokemonData.nickname = nickname;
-    existingReserveData.push(pokemonData);
-  }
- 	localStorage.setItem('myTeam', JSON.stringify(existingTeamData));
-  localStorage.setItem('myReserve', JSON.stringify(existingReserveData));
-    displayTeam();
-  displayReserve();
+
+// För att returnera endast små bokstäver!
+function normalizeName(name) {
+  return name.toLowerCase();
 }
 
-function kickFromTeam(index) {
-  const existingTeamData = getExistingTeamData(); 
-  const existingReserveData = getExistingReserveData(); 
-  const kickedPokemon = existingTeamData.splice(index, 1)[0];
-  existingReserveData.push(kickedPokemon);
-  localStorage.setItem('myTeam', JSON.stringify(existingTeamData));
-  localStorage.setItem('myReserve', JSON.stringify(existingReserveData));
-
-
-  displayTeam();
-  displayReserve();
-}
-
-export function changeOrder(indexFrom, indexTo) {
-  const existingTeamData = getExistingTeamData(); 
-  const movedPokemon = existingTeamData.splice(indexFrom, 1)[0];
-  existingTeamData.splice(indexTo, 0, movedPokemon);
-  localStorage.setItem('myTeam', JSON.stringify(existingTeamData));
-  displayTeam();
-}
-
-
-export function addPokemonToTeamDOM(pokemonData) {
-  const myTeamDiv = document.querySelector('.my-team');
-  const championPokemonDiv = createPokemonDiv(pokemonData);
-  const nicknameInput = createNicknameInput();
-  const confirmButton = createConfirmButton(pokemonData, nicknameInput);
-  championPokemonDiv.appendChild(nicknameInput);
-  championPokemonDiv.appendChild(confirmButton);
-  myTeamDiv.appendChild(championPokemonDiv);
-}
-
-export function createPokemonDiv(pokemonData) {
-  const championPokemonDiv = document.createElement('div');
-  championPokemonDiv.classList.add('pokemon-enter2');
-
-  const img = document.createElement('img');
-  img.src = pokemonData.sprites?.front_default || '';
-  img.alt = pokemonData.name;
-  championPokemonDiv.appendChild(img);
-
-  const h2 = document.createElement('h2');
-  h2.textContent = `Name: ${pokemonData.name}`;
-  championPokemonDiv.appendChild(h2);
-
-  const abilitiesParagraph = document.createElement('p');
-  const abilitiesText = pokemonData.abilities.map((ability) => ability.ability.name).join(', ');
-  abilitiesParagraph.textContent = `Abilities: ${abilitiesText}`;
-  championPokemonDiv.appendChild(abilitiesParagraph);
-
-  return championPokemonDiv;
-}
-
-export function createNicknameInput() {
-  const nicknameInput = document.createElement('input');
-  nicknameInput.type = 'text';
-  nicknameInput.placeholder = 'Choose a nickname';
-  return nicknameInput;
-}
-
-export function createConfirmButton(pokemonData, nicknameInput) {
-  const confirmButton = document.createElement('button');
-  confirmButton.textContent = 'Confirm nickname';
-  confirmButton.addEventListener('click', () => handleConfirmNickname(pokemonData, nicknameInput));
-  return confirmButton;
-}
-
-export function saveToLocalStorage(pokemonData) {
-  const existingTeamData = JSON.parse(localStorage.getItem('myTeam')) || [];
-  
-  const pokemonInfoToSave = {
-    name: pokemonData.name,
-    imageUrl: pokemonData.SpritesUrl || '',
-    nickname: pokemonData.nickname || ''
-  };
-
-  existingTeamData.push(pokemonInfoToSave);
-  localStorage.setItem('myTeam', JSON.stringify(existingTeamData));
-  membersPokemon.push(pokemonInfoToSave);
-
-  console.log('Saving to local storage:', pokemonInfoToSave);
-}
-
-document.addEventListener("DOMContentLoaded", async function () {
+// FÖR ATT FÅ UT ALLA BILDERNA PÅ SIDAN
+async function getPokemon() {
   try {
-    console.log('Starting initialization...');
-    const storedTeamData = JSON.parse(localStorage.getItem('myTeam')) || [];
-    membersPokemon = storedTeamData.slice(0, maxTeam);
-    reservDiv = storedTeamData.slice(maxTeam);
-	displayTeam();
+    const url = 'https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0';
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (data.results && data.results.length > 0) {
+      const pokemonLista = data.results.map((pokemon) => ({
+        name: pokemon.name,
+        url: pokemon.url
+      }));
+      return pokemonLista;
+    } else {
+      console.error('No results');
+      return [];
+    }
+
   } catch (error) {
-    console.error('Error during initialization:', error);
+    console.error('Error with fetching', error);
+    throw error; 
   }
-});
+}
 
-export function displayTeam() {
-  const myTeamDiv = document.querySelector('.my-team');
-  myTeamDiv.innerHTML = '';
+//let imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonData.id}.png`;
 
-  team.membersPokemon.forEach((pokemonData, index) => {
-    const pokemonDiv = document.createElement('div');
-	pokemonDiv.classList.add('pokemon-enter2');
-	pokemonDiv.dataset.index = index;
+let attributes = []
+// Till console.log:: 
+const url = ('https://pokeapi.co/api/v2/')
 
-    const h2 = document.createElement('h2');
-    h2.textContent = `Namn på pokemon ${pokemonData.nickname || pokemonData.name}`;
-    pokemonDiv.appendChild(h2);
+//får ut bilderna
+async function fetchPokemonData(pokemonList) {
+  try {
+    const fetchPromises = pokemonList.map(async (pokemon) => {
+      const response = await fetch(pokemon.url);
+      const pokemonData = await response.json();
 
-    const imageDiv = document.createElement('div');
-    imageDiv.classList.add('image');
+      if (pokemonData.sprites && pokemonData.sprites.front_default) {
+        pokemonData.SpritesUrl = pokemonData.sprites.front_default;
+        displayPokemon([pokemonData]);
+      } else {
+        console.error(`No image for ${pokemon.name}`);
+      }
 
-    const img = document.createElement('img');
-    img.src = pokemonData.imageUrl;
-    imageDiv.appendChild(img);
-    pokemonDiv.appendChild(imageDiv);
+      return pokemonData;
+    });
 
-    const kickButton = document.createElement('button');
-    kickButton.classList.add('kickHere');
-    kickButton.textContent = 'Kick from team';
-    kickButton.addEventListener('click', () => handleKickFromTeam(index));
-    pokemonDiv.appendChild(kickButton);
-    
-	const toReservButton = document.createElement('button');
-    toReservButton.classList.add('toreserv');
-    toReservButton.textContent = 'Send to reserv';
-    toReservButton.addEventListener('click', () => handleSendToReserv(index));
-    pokemonDiv.appendChild(toReservButton);
-
-    const smeknamnDiv = document.createElement('div');
-    smeknamnDiv.classList.add('smeknamn');
-
-    const label = document.createElement('label');
-    label.textContent = 'Change name';
-    smeknamnDiv.appendChild(label);
-
-    const inputNickname = document.createElement('input');
-    inputNickname.type = 'text';
-    inputNickname.placeholder = 'Change nickname';
-    inputNickname.value = pokemonData.nickname || '';
-    smeknamnDiv.appendChild(inputNickname);
+    const pokemonDataArray = await Promise.all(fetchPromises);
+    return pokemonDataArray;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+}
 
 
-	
-    const confirmButton = document.createElement('button');
-    confirmButton.classList.add('confirm');
-    confirmButton.textContent = 'Confirm nickname';
-    confirmButton.addEventListener('click', () => handleConfirmNickname(index));
+const addButtonList = [];
+for (const addButton of addButtonList) {
+  addButton.addEventListener('click', async function () {
+    const index = addButtonList.indexOf(addButton);
+    console.log('Button clicked at index:', index);
 
-    smeknamnDiv.appendChild(confirmButton);
+    if (index !== -1) {
+      const selectedPokemon = pokemonList[index];
+      console.log('Selected Pokemon:', selectedPokemon);
 
-    pokemonDiv.appendChild(smeknamnDiv);
+      const fetchedPokemonData = await fetchPokemonData([selectedPokemon]);
+      console.log('Fetched Pokemon data for selected Pokemon:', fetchedPokemonData);
 
-    myTeamDiv.appendChild(pokemonDiv);
-
+      // Assuming addpokemonToTeam accepts an array of Pokémon data
+      addpokemonToTeam(fetchedPokemonData);
+    }
   });
 }
 
+ function displayTeam() {
+    const myTeamDiv = document.querySelector('.my-team');
+    myTeamDiv.innerHTML = ''; // Rensa innehållet för att uppdatera
+
+    // Loopa genom alla medlemmar i teamet
+    team.membersPokemon.forEach((pokemonData, index) => {
+        const pokemonDiv = document.createElement('div');
+        pokemonDiv.classList.add('pokemon-enter');
+
+        // Skapa och lägg till nya element i "MY TEAM" -diven
+        const h2 = document.createElement('h2');
+        h2.textContent = `Namn på pokemon ${pokemonData.nickname || pokemonData.name}`;
+        pokemonDiv.appendChild(h2);
+
+        const imageDiv = document.createElement('div');
+        imageDiv.classList.add('image');
+        // Skapa och lägg till bild här (använd pokemonData.imageUrl)
+        const img = document.createElement('img');
+        img.src = pokemonData.imageUrl;
+        imageDiv.appendChild(img);
+        pokemonDiv.appendChild(imageDiv);
+
+        const kickButton = document.createElement('button');
+        kickButton.classList.add('kickHere');
+        kickButton.textContent = 'Kick from team';
+        // Lägg till händelselyssnare för att sparka Pokémon från teamet
+        kickButton.addEventListener('click', () => handleKickFromTeam(index)); // Använd index för att identifiera pokémonen
+        pokemonDiv.appendChild(kickButton);
+
+        const toReservButton = document.createElement('button');
+        toReservButton.classList.add('toreserv');
+        toReservButton.textContent = 'Send to reserv';
+        // Lägg till händelselyssnare för att skicka Pokémon till reserv
+        toReservButton.addEventListener('click', () => handleSendToReserv(index)); // Använd index för att identifiera pokémonen
+        pokemonDiv.appendChild(toReservButton);
+
+        const smeknamnDiv = document.createElement('div');
+        smeknamnDiv.classList.add('smeknamn');
+
+        const label = document.createElement('label');
+        label.textContent = 'Change name';
+        smeknamnDiv.appendChild(label);
+
+        const inputNickname = document.createElement('input');
+        inputNickname.type = 'text';
+        inputNickname.placeholder = 'Change nickname';
+        inputNickname.value = pokemonData.nickname || ''; // Använd nuvarande smeknamn eller en tom sträng
+        smeknamnDiv.appendChild(inputNickname);
+
+        const confirmButton = document.createElement('button');
+        confirmButton.classList.add('confirm');
+        confirmButton.textContent = 'Confirm nickname';
+        // Lägg till händelselyssnare för att bekräfta smeknamnändring
+        confirmButton.addEventListener('click', () => handleConfirmNickname(index)); // Använd index för att identifiera pokémonen
+        smeknamnDiv.appendChild(confirmButton);
+
+        pokemonDiv.appendChild(smeknamnDiv);
+
+        // Lägg till den nya Pokémon i "MY TEAM" -diven
+        myTeamDiv.appendChild(pokemonDiv);
+    });
+}
+
+
+// DISPLAY POKEMON:: 
+//pokemon-bilderna och förmågorna
+
+async function displayPokemon(pokemonList) {
+  const searchForPokemonDiv = document.querySelector('.searchForPokemonDiv');
+
+  for (const pokemonData of pokemonList) {
+    const abilities = pokemonData.abilities || [];
+    const championPokemonDiv = document.createElement('div');
+    championPokemonDiv.classList.add('pokemon-enter');
+
+	const addButton = document.createElement('button');
+    addButton.classList.add('add-champion-button');
+    addButton.textContent = 'Add to Team';
+    addButtonList.push(addButton);
+	addButton.addEventListener('click', function() {
+      const index = addButtonList.indexOf(addButton);
+      const selectedPokemon = pokemonList[index];
+      addChampionToTeam(selectedPokemon);
+    });
+
+    // Lägg till unik identifierare
+    const uniqueId = pokemonData.name.toLowerCase();
+    championPokemonDiv.setAttribute('id', uniqueId);
+
+    // Bildelement
+    const imageUrl = pokemonData.SpritesUrl;
+    const img = document.createElement('img');
+    img.src = imageUrl;
+    img.alt = pokemonData.name;
+    championPokemonDiv.appendChild(img);
+
+    const rubrikPokemon = document.createElement('h2');
+    rubrikPokemon.textContent = `Name: ${pokemonData.name}`;
+    championPokemonDiv.appendChild(rubrikPokemon);
+
+    // Visa abilities på pokemonen
+    const pokemonTypes = document.createElement('p');
+    pokemonTypes.textContent = `Abilities: ${abilities.map((ability) => ability.ability.name).join(', ')}`;
+    championPokemonDiv.appendChild(pokemonTypes);
+
+    // Lägg till championdiv i sökdiven
+    searchForPokemonDiv.appendChild(championPokemonDiv);
+
+    // Knapp för att lägga till pokemonen
+    const addPokemonsButton = document.createElement('button');
+    addPokemonsButton.classList.add('addPokemonsbutton');
+    addPokemonsButton.textContent = 'Add champions to team';
+
+    // Lägg till en unik klass för varje knapp baserat på Pokemonens namn
+    addPokemonsButton.classList.add(`add-button-${uniqueId}`);
+
+    championPokemonDiv.appendChild(addPokemonsButton);
+
+    const nicknameInput = document.createElement('input');
+    nicknameInput.type = 'text';
+    nicknameInput.placeholder = 'choose a nickname';
+    championPokemonDiv.appendChild(nicknameInput);
+
+    addButtonList.push(addPokemonsButton);
+  }
+
+  return addButtonList;
+}
+
+
+
+export { fetchPokemonData, displayPokemon, normalizeName, displayTeam};

@@ -1,6 +1,5 @@
 import { getPokemon, fetchPokemonData, displayPokemon, normalizeName } from "./ajax.js";
-import{ addToTeam, displayTeam} from "./storage.js"
-
+import{displayTeam} from "./storage.js"
 
 const searchInput = document.getElementById('searchInput');
 const searchButton = document.getElementById('searchbutton');
@@ -9,7 +8,8 @@ const addPokemonButton = document.querySelector('.addPokemonsbutton');
 const pokemonInfoDiv = document.getElementById('pokemonInfo');
 const kickFromTeamBtn = document.querySelector('.kickHere');
 const toReservBtn = document.querySelector('.toreserv');
- let reservDiv = []
+let team = { membersPokemon: [], reservDiv: []};
+let reservDiv = []
 let countTeam= 0;
 let countReserv = 0;
 export const maxTeam = 3;
@@ -24,9 +24,9 @@ nicknameInput.placeholder = 'choose a nickname';
 searchButton.addEventListener('click', handlesearch);
 
 searchInput.addEventListener('keydown', (event) => {
-	if (event.key === 'Enter'){
-		handlesearch();
-	}
+    if (event.key === 'Enter'){
+        handlesearch();
+    }
 });
 
 document.addEventListener("DOMContentLoaded", async function () {
@@ -55,14 +55,11 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
       });
     }
-
     console.log('Initialization complete.');
   } catch (error) {
     console.error('Error during initialization:', error);
   }
 });
-
-
 
 async function handlesearch() {
   const name = normalizeName(searchInput.value);
@@ -91,8 +88,6 @@ async function handlesearch() {
   }
 }
 
-
-
 async function addpokemonToTeam(pokemonEnterDiv) {
   const addButtons = pokemonEnterDiv.querySelectorAll('.addPokemonsbutton');
   addButtons.forEach((button) => {
@@ -101,16 +96,12 @@ async function addpokemonToTeam(pokemonEnterDiv) {
   });
 }
 
-
-addPokemonButton.addEventListener('click', (event) => handleAddClick(event));
-
-
+if(addPokemonButton != null){
+  addPokemonButton.addEventListener('click', (event) => handleAddClick(event));
+}
 
 function handleAddClick(event) {
-  event.preventDefault();
-
-  const addButton = event.currentTarget;
-  const pokemonEnterDiv = addButton.closest('.pokemon-enter');
+  const pokemonEnterDiv = event.closest('.pokemon-enter');
 
   const pokemonData = {
     name: pokemonEnterDiv.querySelector('h2').textContent,
@@ -118,7 +109,7 @@ function handleAddClick(event) {
     abilities: pokemonEnterDiv.querySelector('p').textContent
   };
 
-  const nicknameInput = pokemonEnterDiv.querySelector('.nickname-input');
+  const nicknameInput = pokemonEnterDiv.querySelector('input');
   const nickname = nicknameInput.value;
 
   if (nickname !== '') {
@@ -129,44 +120,25 @@ function handleAddClick(event) {
   }
 }
 
-
-
-
-
-function addInTeam(pokemonData) {
-  const nicknameInput = pokemonEnterDiv.querySelector('.nickname-input');
-  const nickname = nicknameInput.value;
-
-  const pokemon = {
-    name: pokemonData.name,
-    imageUrl: pokemonData.imageUrl,
-    abilities: pokemonData.abilities,
-    nickname: nickname,
-  };
-
+function addInTeam(pokemon) {
   if (team.membersPokemon.length < maxTeam) {
     team.membersPokemon.push(pokemon);
   } else {
     team.reservDiv.push(pokemon);
   }
-
-  displayTeam();
+  displayTeam(team);
 }
-
-
 
 function handleConfirmNickname(index) {
   const newNickname = document.querySelector(`.pokemon-enter2[data-index="${index}"] .smeknamn input`).value;
   team.membersPokemon[index].nickname = newNickname;
-  displayTeam();
+  displayTeam(team);
 }
-
-
 
 function handleSendToReserv(index) {
   const pokemonToMove = team.membersPokemon.splice(index, 1)[0];
   team.reservDiv.push(pokemonToMove);
-  displayTeam();
+  displayTeam(team);
 }
 let addButtonList = document.querySelectorAll('.add-champion-button');
 
@@ -177,33 +149,35 @@ searchForPokemonDiv.addEventListener('click', function (event) {
   }
 });
 
-
 function isTeamComplete() {
   const existingTeamData = getExistingTeamData(); 
   return existingTeamData.length === 3;
 }
 
-function movePokemonDown(pokemon){
-	const index = teamList.indexOf(pokemon);
-	if(index < teamList.length -1){
-		const temp = teamList[index];
-		teamList[index] = teamList[index + 1];
-		teamlist[index + 1] = temp;
-	}
+function movePokemonDown(list, pokemon){ //teamList / reservList skickas in från metoden som anropar denna
+    const index = list.indexOf(pokemon);
+    if(index < list.length -1){
+        const temp = list[index];
+        list[index] = list[index + 1];
+        list[index + 1] = temp;
+    }
 }
 function movePokemonUp (pokemon) {
-	const index = reservDiv.indexOf(pokemon)
-	if(index > 0) {
-		const temp = reservList[index]
-		reservList[index] = reservList[index -1]
-		reservList[index - 1] = temp;
-	}
+    const index = reservDiv.indexOf(pokemon)
+    if(index > 0) {
+        const temp = reservList[index]
+        reservList[index] = reservList[index -1]
+        reservList[index - 1] = temp;
+    }
 }
+
+/* 
 function movepokemonDownReserv(pokemon){
-	const index = reservList.indexOf(pokemon);
-	if (index < reservList.length -1) {
-		const temp = reservList [index]
-		reservList[index] = reservList[index + 1]
-		reservList[index +1] = temp;
-	}
+    const index = reservList.indexOf(pokemon);
+    if (index < reservList.length -1) {
+        const temp = reservList [index]
+        reservList[index] = reservList[index + 1]
+        reservList[index +1] = temp;
+    }
 }
+*/
