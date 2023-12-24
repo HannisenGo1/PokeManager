@@ -89,15 +89,7 @@ async function handlesearch() {
 }
 
 async function addpokemonToTeam(pokemonEnterDiv) {
-  const addButtons = pokemonEnterDiv.querySelectorAll('.addPokemonsbutton');
-  addButtons.forEach((button) => {
-    button.removeEventListener('click', handleAddClick);
-    button.addEventListener('click', () => handleAddClick(pokemonEnterDiv));
-  });
-}
-
-if(addPokemonButton != null){
-  addPokemonButton.addEventListener('click', (event) => handleAddClick(event));
+  handleAddClick(pokemonEnterDiv);
 }
 
 function handleAddClick(event) {
@@ -111,13 +103,6 @@ function handleAddClick(event) {
 
   const nicknameInput = pokemonEnterDiv.querySelector('input');
   const nickname = nicknameInput.value;
-
-  if (nickname !== '') {
-    pokemonData.nickname = nickname;
-    addInTeam(pokemonData);
-  } else {
-    console.error('Please enter a nickname.');
-  }
 }
 
 function addInTeam(pokemon) {
@@ -128,6 +113,7 @@ function addInTeam(pokemon) {
   }
   displayTeam(team);
 }
+
 
 function handleConfirmNickname(index) {
   const newNickname = document.querySelector(`.pokemon-enter2[data-index="${index}"] .smeknamn input`).value;

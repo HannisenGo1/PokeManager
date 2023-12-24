@@ -81,7 +81,7 @@ for (const addButton of addButtonList) {
       const fetchedPokemonData = await fetchPokemonData([selectedPokemon]);
       console.log('Fetched Pokemon data for selected Pokemon:', fetchedPokemonData);
 
-      // Assuming addpokemonToTeam accepts an array of Pokémon data
+    
       addpokemonToTeam(fetchedPokemonData);
     }
   });
