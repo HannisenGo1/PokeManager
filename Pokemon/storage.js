@@ -101,7 +101,7 @@ export function displayTeam(team) {
 	pokemonDiv.dataset.index = index;
 
     const h2 = document.createElement('h2');
-    h2.textContent = `Namn på pokemon ${pokemonData.nickname || pokemonData.name}`;
+    h2.textContent = `Name: ${pokemonData.nickname || pokemonData.name}`;
     pokemonDiv.appendChild(h2);
 
     const imageDiv = document.createElement('div');

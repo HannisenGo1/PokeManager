@@ -1,6 +1,7 @@
 import { getPokemon, fetchPokemonData, displayPokemon, normalizeName } from "./ajax.js";
 import{displayTeam} from "./storage.js"
 
+
 const searchInput = document.getElementById('searchInput');
 const searchButton = document.getElementById('searchbutton');
 const searchForPokemonDiv = document.querySelector('.searchForPokemonDiv');
