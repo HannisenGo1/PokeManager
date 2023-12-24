@@ -21,12 +21,13 @@ const nicknameInput = document.createElement('input');
 nicknameInput.type = 'text';
 nicknameInput.placeholder = 'choose a nickname';
 
+
 searchButton.addEventListener('click', handlesearch);
 
 searchInput.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter'){
-        handlesearch();
-    }
+	if (event.key === 'Enter'){
+		handlesearch();
+	}
 });
 
 document.addEventListener("DOMContentLoaded", async function () {
@@ -103,6 +104,13 @@ function handleAddClick(event) {
 
   const nicknameInput = pokemonEnterDiv.querySelector('input');
   const nickname = nicknameInput.value;
+
+  if (nickname !== '') {
+    pokemonData.nickname = nickname;
+    addInTeam(pokemonData);
+  } else {
+    console.error('Please enter a nickname.');
+  }
 }
 
 function addInTeam(pokemon) {
@@ -113,7 +121,6 @@ function addInTeam(pokemon) {
   }
   displayTeam(team);
 }
-
 
 function handleConfirmNickname(index) {
   const newNickname = document.querySelector(`.pokemon-enter2[data-index="${index}"] .smeknamn input`).value;
@@ -141,29 +148,29 @@ function isTeamComplete() {
 }
 
 function movePokemonDown(list, pokemon){ //teamList / reservList skickas in från metoden som anropar denna
-    const index = list.indexOf(pokemon);
-    if(index < list.length -1){
-        const temp = list[index];
-        list[index] = list[index + 1];
-        list[index + 1] = temp;
-    }
+	const index = list.indexOf(pokemon);
+	if(index < list.length -1){
+		const temp = list[index];
+		list[index] = list[index + 1];
+		list[index + 1] = temp;
+	}
 }
 function movePokemonUp (pokemon) {
-    const index = reservDiv.indexOf(pokemon)
-    if(index > 0) {
-        const temp = reservList[index]
-        reservList[index] = reservList[index -1]
-        reservList[index - 1] = temp;
-    }
+	const index = reservDiv.indexOf(pokemon)
+	if(index > 0) {
+		const temp = reservList[index]
+		reservList[index] = reservList[index -1]
+		reservList[index - 1] = temp;
+	}
 }
 
 /* 
 function movepokemonDownReserv(pokemon){
-    const index = reservList.indexOf(pokemon);
-    if (index < reservList.length -1) {
-        const temp = reservList [index]
-        reservList[index] = reservList[index + 1]
-        reservList[index +1] = temp;
-    }
+	const index = reservList.indexOf(pokemon);
+	if (index < reservList.length -1) {
+		const temp = reservList [index]
+		reservList[index] = reservList[index + 1]
+		reservList[index +1] = temp;
+	}
 }
 */
