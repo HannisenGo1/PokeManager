@@ -48,6 +48,10 @@ export function createPokemonDiv(pokemonData) {
   abilitiesParagraph.textContent = `Abilities: ${abilitiesText}`;
   championPokemonDiv.appendChild(abilitiesParagraph);
 
+  //div för reserver
+
+  
+
   return championPokemonDiv;
 }
 export function createNicknameInput() {
@@ -93,7 +97,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 export function displayTeam(team) {
   const myTeamDiv = document.querySelector('.my-team');
+
   myTeamDiv.innerHTML = '';
+
+  const teamStatusText = document.createElement('p');
+  teamStatusText.textContent = `Team members: ${team.membersPokemon.length} | Reserve members: ${team.reservDiv.length}`;
+  
 
   team.membersPokemon.forEach((pokemonData, index) => {
     const pokemonDiv = document.createElement('div');
@@ -103,6 +112,7 @@ export function displayTeam(team) {
     const h2 = document.createElement('h2');
     h2.textContent = `Name: ${pokemonData.nickname || pokemonData.name}`;
     pokemonDiv.appendChild(h2);
+
 
     const imageDiv = document.createElement('div');
     imageDiv.classList.add('image');
@@ -120,9 +130,16 @@ export function displayTeam(team) {
     
 	const toReservButton = document.createElement('button');
     toReservButton.classList.add('toreserv');
-    toReservButton.textContent = 'Send to reserv';
-    toReservButton.addEventListener('click', () => handleSendToReserv(index));
-    pokemonDiv.appendChild(toReservButton);
+    toReservButton.textContent = 'Move to reserv';
+    pokemonDiv.appendChild(toReservButton)
+    toReservButton.addEventListener('click', () => handleMovetoReserv(index));
+
+	const addToTeamButton = document.createElement('button');
+  addToTeamButton.classList.add('addToTeam');
+  addToTeamButton.textContent = 'Add to Team';
+  addToTeamButton.addEventListener('click', () => addToTeam(pokemonData));
+  pokemonDiv.appendChild(addToTeamButton);
+  //pokemondiv.appendChild(addToTeamButton);
 
     const smeknamnDiv = document.createElement('div');
     smeknamnDiv.classList.add('smeknamn');
@@ -138,17 +155,22 @@ export function displayTeam(team) {
     smeknamnDiv.appendChild(inputNickname);
 
 
-	
     const confirmButton = document.createElement('button');
     confirmButton.classList.add('confirm');
     confirmButton.textContent = 'Confirm nickname';
     confirmButton.addEventListener('click', () => handleConfirmNickname(index));
 
     smeknamnDiv.appendChild(confirmButton);
-
     pokemonDiv.appendChild(smeknamnDiv);
-
     myTeamDiv.appendChild(pokemonDiv);
+ }); 
 
-  });
+
+	//för att räkna pokemon antal och reserv antalet
+//	const teamMembersCount = team.membersPokemon.length;
+ // const reservMembersCount = team.reservDiv.length;
+ // const teamStatusText = document.createElement('p');
+ // teamStatusText.textContent = `Team members: ${teamMembersCount} | Reserve members: ${reservMembersCount}`;
+//  myTeamDiv.appendChild(teamStatusText);
+ 
 }

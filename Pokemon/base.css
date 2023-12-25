@@ -115,6 +115,7 @@ background-color: yellow;
 body {
 	background-color: whitesmoke;
 }
+#NuvarandeTeam,
 .searchForPokemonDiv{
 	display:flex;
 	flex-wrap: wrap;
@@ -127,7 +128,7 @@ body {
 	justify-content: center;
 	gap: 10px;
 }
-.pokemon-enter  {
+#NuvarandeTeam, .pokemon-enter2, .pokemon-enter, .my-team {
 	
 	border: 1px solid black;
 	flex: 1 0 calc(50% - 20px);
@@ -199,8 +200,7 @@ footer > p {
 }
 
 
-.championMenyn,
-.my-team {
+.championMenyn{
 
 	display: flex;
 	flex-direction: column;
@@ -210,10 +210,21 @@ footer > p {
 	padding: 0em;
 	min-width: 100%;
 	box-sizing: border-box;
-		border: 1px solid black;
-		text-align: center;
+	text-align: center;
 }
-
+/* lägga till storlek för diven */ 
+.my-team {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+	color: black;
+	padding: 0em;
+	min-width: 100%;
+	box-sizing: border-box;
+	border: 1px solid black;
+	text-align: center;
+}
 .hidden {
 	display: none;
 }

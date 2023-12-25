@@ -129,10 +129,12 @@ function handleConfirmNickname(index) {
   displayTeam(team);
 }
 
-function handleSendToReserv(index) {
-  const pokemonToMove = team.membersPokemon.splice(index, 1)[0];
-  team.reservDiv.push(pokemonToMove);
-  displayTeam(team);
+function handleMoveToReserv(index, pokemonData) {
+  const kickedPokemon = team.membersPokemon.splice(index, 1)[0];
+  reservDiv.push(kickedPokemon);
+  displayTeam({ membersPokemon, reservDiv});
+  displayReserv(reservDiv)
+  console.log(`moved ${kickedPokemon.nickname || kickedPokemon.name} to reserv.`)
 }
 let addButtonList = document.querySelectorAll('.add-champion-button');
 
@@ -147,6 +149,17 @@ function isTeamComplete() {
   const existingTeamData = getExistingTeamData(); 
   return existingTeamData.length === 3;
 }
+function addPokemonToReservDom(pokemonData){
+	const nuvarandeTeamDiv = document.getElementById('NuvarandeTeam');
+	const pokemonDiv = document.createElement('div');
+	pokemonDiv.classList.add('pokemon-enter2');
+	const h2 = document.createElement('h2');
+	h2.textContent = `name: ${pokemonData.nickname || pokemonData.name}`
+	pokemonDiv.appendChild(h2)
+	nuvarandeTeamDiv.appendChild(pokemonDiv);
+}
+
+
 
 function movePokemonDown(list, pokemon){ //teamList / reservList skickas in från metoden som anropar denna
 	const index = list.indexOf(pokemon);
@@ -156,22 +169,28 @@ function movePokemonDown(list, pokemon){ //teamList / reservList skickas in frå
 		list[index + 1] = temp;
 	}
 }
-function movePokemonUp (pokemon) {
-	const index = reservDiv.indexOf(pokemon)
-	if(index > 0) {
-		const temp = reservList[index]
-		reservList[index] = reservList[index -1]
-		reservList[index - 1] = temp;
-	}
+
+function handleKickFromTeam(index, pokemonData) {
+  const kickedPokemon = membersPokemon.splice(index, 1)[0];
+  displayTeam({membersPokemon, reservDiv});
+  console.log(`Kicked ${kickedPokemon.nickname || kickedPokemon.name} from the team.`);
 }
 
-/* 
-function movepokemonDownReserv(pokemon){
-	const index = reservList.indexOf(pokemon);
-	if (index < reservList.length -1) {
-		const temp = reservList [index]
-		reservList[index] = reservList[index + 1]
-		reservList[index +1] = temp;
-	}
+export function displayReserv(reservDiv){
+	const reservTeamDiv = document.createElement('div');
+	pokemonInfoDiv.classList.add('pokemon-enter2')
+	const h2 = document.createElement('h2');
+	h2.textContent = `Name: ${pokemonData.nickname || pokemonData.name}`
+	pokemonInfoDiv.appendChild(h2);
+
+	reservTeamDiv.appendChild(pokemonDiv)
 }
-*/
+
+
+
+function removeFromLocalStorage(pokemonData){
+	const pokemonLista = pokemonLista.filter(pokemon => pokemon.nickname != pokemonData.nickname)
+
+	localStorage.setItem('pokemonlista', JSON.stringify(updatedList));
+}
+
