@@ -3,6 +3,7 @@ let abilities = [];
 
 
 
+
 // För att returnera endast små bokstäver!
 function normalizeName(name) {
   return name.toLowerCase();

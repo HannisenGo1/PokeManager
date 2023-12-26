@@ -20,9 +20,6 @@ backmeny.classList.add('hidden');
 serchMeny.classList.add('hidden');
 
 
-
-
-
 findChampionButton.addEventListener('click', async () => {
 	serchMeny.classList.remove('hidden');
 	divFindChampionButton.classList.add('hidden');
@@ -44,6 +41,7 @@ myTeamButton.addEventListener('click', async () => {
 	findChampionButton.classList.add('hidden')
 	headercolor.classList.add('hidden');
 	headerblue.classList.remove('hidden');
+	
 });
 
 backButton.addEventListener('click', async () => { 

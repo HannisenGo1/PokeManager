@@ -22,7 +22,12 @@ font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 	text-align: center;
 	background-color: whitesmoke;
 }
-
+/*Antal pokemon och reserv medlemmar */ 
+.Team-status{
+	display:flex;
+	font-size: 1em;
+	text-align: center;
+}
 /*TESTNING NEDANFÖR */
 .pokemonLista, #pokemonInfo, #klarMeddelande {
 	display: flex;
