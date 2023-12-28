@@ -1,10 +1,11 @@
- import {maxTeam, membersPokemon, ReservDiv} from "./functionButtons.js";
+import {maxTeam} from "./functionButtons.js";
 import { displayPokemon} from "./ajax.js"
+export let membersPokemon =[]
+export let ReservPokemons= []
 
 
 export function addToTeam(pokemonData) {
 	console.log('startar addtoteam function');
-	debugger;
     const pokemonInfoToSave = {
       name: pokemonData.name,
       imageUrl: pokemonData.SpritesUrl || '',
@@ -14,11 +15,11 @@ export function addToTeam(pokemonData) {
 		console.log('maxteam:', maxTeam)
 	membersPokemon.push(pokemonInfoToSave)
   }else{
-	ReservDiv.push(pokemonInfoToSave)
+	ReservPokemons.push(pokemonInfoToSave)
 	displayReserve();
   }
- displayTeam({membersPokemon, ReservDiv})
- console.log('reservdiven:' , ReservDiv)
+ displayTeam({membersPokemon, ReservPokemons})
+ console.log('reservlistan:' , ReservPokemons)
  console.log('slutet av addtoteam functionen');
 }
 
@@ -47,15 +48,6 @@ export function createPokemonDiv(pokemonData) {
   const h2 = document.createElement('h2');
   h2.textContent = `Name: ${pokemonData.name}`;
   championPokemonDiv.appendChild(h2);
-
-  const abilitiesParagraph = document.createElement('p');
-  const abilitiesText = pokemonData.abilities.map((ability) => ability.ability.name).join(', ');
-  abilitiesParagraph.textContent = `Abilities: ${abilitiesText}`;
-  championPokemonDiv.appendChild(abilitiesParagraph);
-
-  //div för reserver
-
-  
 
   return championPokemonDiv;
 }
@@ -95,8 +87,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     console.log('Starting initialization...');
     const storedTeamData = JSON.parse(localStorage.getItem('myteam')) || []; //myTeam
     membersPokemon = storedTeamData.slice(0, maxTeam);
-    ReservDiv = storedTeamData.slice(maxTeam);
-	displayTeam({membersPokemon, ReservDiv})
+    ReservPokemons = storedTeamData.slice(maxTeam);
+	displayTeam({membersPokemon, ReservPokemons})
 
   } catch (error) {
     console.error('Error during initialization:', error);
@@ -109,8 +101,8 @@ export function displayTeam() {
 
   const teamStatusDiv = document.createElement('div');
   teamStatusDiv.classList.add('Team-status')
-  teamStatusDiv.textContent = `Team members: ${membersPokemon.length} | Reserve members: ${ReservDiv.length}`;
-  console.log('reservdivens längd',ReservDiv.length)
+  teamStatusDiv.textContent = `Team members: ${membersPokemon.length} | Reserve members: ${ReservPokemons.length}`;
+  console.log('reservdivens längd',ReservPokemons.length)
  myTeamDiv.appendChild(teamStatusDiv)
 
 
@@ -182,8 +174,8 @@ pokemonDiv.appendChild(addToTeamButton)
     pokemonDiv.appendChild(smeknamnDiv);
     myTeamDiv.appendChild(pokemonDiv);
  }); 
- if (ReservDiv && ReservDiv.length > 0) {
-  const firstReservPokemon = ReservDiv.shift();
+ if (ReservPokemons && ReservPokemons.length > 0) {
+  const firstReservPokemon = ReservPokemons.shift();
   membersPokemon.push(firstReservPokemon);
   console.log('första reservpokemon', firstReservPokemon);
   displayReserve();
@@ -200,7 +192,7 @@ export function displayReserve() {
   if (reservDiv) {
     reservDiv.innerHTML = '';
 
-    ReservDiv.forEach((pokemonData, index) => {
+    ReservPokemons.forEach((pokemonData, index) => {
       console.log('Reserv Pokemon Data:', pokemonData);
       const reservPokemonDiv = createPokemonDiv(pokemonData, index);
       console.log('Reserv Pokemon Div:', reservPokemonDiv);
@@ -210,4 +202,3 @@ export function displayReserve() {
     console.error('Reserverdiv hittas ej i dom');
   }
 }
-

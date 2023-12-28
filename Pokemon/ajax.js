@@ -1,8 +1,6 @@
 let img = document.createElement('img')
 let abilities = [];
-
-
-
+ //import {maxTeam, addToTeam, displayTeam, displayReserve, membersPokemon, ReservPokemons} from "./functionButtons.js"
 
 // För att returnera endast små bokstäver!
 function normalizeName(name) {
@@ -37,7 +35,7 @@ function normalizeName(name) {
 
 let attributes = []
 // Till console.log:: 
-const url = ('https://pokeapi.co/api/v2/')
+//const url = ('https://pokeapi.co/api/v2/')
 
 //får ut bilderna
 async function fetchPokemonData(pokemonList) {
@@ -52,16 +50,14 @@ async function fetchPokemonData(pokemonList) {
 
         pokemonData.SpritesUrl = imageUrl;
         // Visa varje matchande Pokemon
-        console.log('Pokemon data:', pokemonData);
         displayPokemon([pokemonData]);
       } else {
         console.error(`No image for ${pokemon.name}`);
       }
-      console.log('finished processing', pokemon.name);
-
+      
       return pokemonData; // Return the data from the map callback
     } catch (error) {
-      console.error(`Error fetch data ${pokemon.name}:`, error);
+      
     }
   });
 
@@ -88,8 +84,6 @@ for (const addButton of addButtonList) {
   });
 }
 
-
-
 // DISPLAY POKEMON:: 
 //pokemon-bilderna och förmågorna
 
@@ -109,6 +103,7 @@ async function displayPokemon(pokemonList) {
 
     addButton.addEventListener('click', async function () {
       addChampionToTeam(pokemonData);
+	  moveChampionsToReserve()
     });
 
     const uniqueId = pokemonData.name.toLowerCase();
@@ -143,15 +138,13 @@ async function displayPokemon(pokemonList) {
 
   return addButtonList;
 }
-    addButtonList.forEach((addButton, index) => {
-    addButton.addEventListener('click', async function () {
-      const selectedPokemon = pokemonList[index];
-      await fetchPokemonData([selectedPokemon]);
-      addpokemonToTeam();
-	
-    });
-  });
-
-
+    function moveChampionsToReserve() {
+  const maxTeamSize = 3; 
+  if (membersPokemon.length > maxTeamSize) {
+    const championsToMove = membersPokemon.splice(maxTeamSize);
+    ReservPokemons = ReservPokemons.concat(championsToMove);
+    displayReserve(); 
+  }
+}
 
 export { getPokemon,fetchPokemonData, displayPokemon, normalizeName};

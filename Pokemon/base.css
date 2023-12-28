@@ -135,7 +135,7 @@ body {
 	box-sizing: border-box;
 	text-align: center;
 }
-.reserver {
+#reserver {
 	border: 1px solid red;
 		flex: 1 0 calc(50% - 20px);
 		/* Anpassa bredden för att ha två Pokémon per rad */
