@@ -24,9 +24,9 @@ font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 /*Antal pokemon och reserv medlemmar */ 
 .Team-status{
-	display:flex;
-	font-size: 1em;
+	font-size: 2em;
 	text-align: center;
+	font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 /*TESTNING NEDANFÖR */
 .pokemonLista, #pokemonInfo, #klarMeddelande {
@@ -44,15 +44,20 @@ font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 
 .pokemon-enter, .pokemon-enter2 {
-	border: 1px solid black;
 	flex: 1 0 calc(33.3% - 20px);
 	box-sizing: border-box;
 	text-align: center;
 	align-items: center;
 	display: flex;
-		flex-direction: column;
-		justify-content: center;
+	flex-direction: column;
+	justify-content: center;
+	border: 1px solid black;
 }
+
+.flex{
+	display: flex;
+}
+
 
 
 .pokemon-enter , .pokemon-enter2 >.image {

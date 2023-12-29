@@ -1,5 +1,5 @@
 import { getPokemon, fetchPokemonData, displayPokemon, normalizeName } from "./ajax.js";
-import{displayTeam, membersPokemon, ReservPokemons} from "./storage.js"
+import{displayTeam, membersPokemon, ReservPokemons, addToTeam} from "./storage.js"
 
 
 const searchInput = document.getElementById('searchInput');
@@ -8,7 +8,6 @@ const searchForPokemonDiv = document.querySelector('.searchForPokemonDiv');
 const addPokemonButton = document.querySelector('.addPokemonsbutton');
 const pokemonInfoDiv = document.getElementById('pokemonInfo');
 const kickFromTeamBtn = document.querySelector('.kickHere');
-const toReservBtn = document.querySelector('.toreserv');
 export const maxTeam = 3;
 
 searchForPokemonDiv.classList.add('hidden');
@@ -26,7 +25,7 @@ searchInput.addEventListener('keydown', (event) => {
 		handlesearch();
 	}
 });
-
+ // fetchar listan från början! 
 document.addEventListener("DOMContentLoaded", async function () {
 	try {
     console.log('Starting initialization...');
@@ -58,7 +57,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     console.error('Error during initialization:', error);
   }
 });
-
+// hanterar sökfunktionen 
 async function handlesearch() {
   const name = normalizeName(searchInput.value);
   const allPokemon = await getPokemon();
@@ -104,40 +103,31 @@ function handleAddClick(event) {
 
   if (nickname !== '') {
     pokemonData.nickname = nickname;
-    addInTeam(pokemonData);
+    addToTeam(pokemonData);
   } else {
     console.error('Please enter a nickname.');
   }
 }
 
-function addInTeam(pokemon) {
-	console.log('Adding pokemon to team', pokemon)
-  if (membersPokemon.length < maxTeam) {
-    membersPokemon.push(pokemon);
-  } else {
-    ReservPokemons.push(pokemon);
-  }
-  displayTeam();
-}
-
-function handleConfirmNickname(index) {
-  const newNickname = document.querySelector(`.pokemon-enter2[data-index="${index}"] .smeknamn input`).value;
-  membersPokemon[index].nickname = newNickname;
-  displayTeam({membersPokemon, ReservPokemons});
-} // sätta in så man kan se abilities ! 
-
-function handleMoveToReserv(index, pokemonData) {
+// kick functionen för att ta bort alla pokemon helt ifrån båda lagen
+export function handleKickFromTeam(index, pokemonData) {
   const kickedPokemon = membersPokemon.splice(index, 1)[0];
-  ReservPokemons.push(kickedPokemon);
+ if (ReservPokemons != null && ReservPokemons.length >0) {
+// Ta första från reservlistan och lägga till i memberspokemon
+// Ta bort från reservlistan, och ladda om reservlistans content
+ }
+
+
+
   displayTeam()
-  console.log(`moved ${kickedPokemon.nickname || kickedPokemon.name} to reserv.`)
+  console.log(`moved ${kickedPokemon.nickname || kickedPokemon.name} out.`)
   try {
 
 } catch (error) {
   console.error('Error:', error);
 }
 }
-let addButtonList = document.querySelectorAll('.add-champion-button');
+//let addButtonList = document.querySelectorAll('.add-champion-button');
 
 searchForPokemonDiv.addEventListener('click', function (event) {
   if (event.target.classList.contains('addPokemonsbutton')) {
@@ -145,21 +135,3 @@ searchForPokemonDiv.addEventListener('click', function (event) {
     addpokemonToTeam(pokemonEnterDiv);
   }
 });
-
-
-function addPokemonToReservDom(pokemonData){
-	const nuvarandeTeamDiv = document.querySelector('.my-team #reserver');
-	const pokemonDiv = document.createElement('div');
-	pokemonDiv.classList.add('pokemon-enter2');
-	const h2 = document.createElement('h2');
-	h2.textContent = `name: ${pokemonData.nickname || pokemonData.name}`
-	pokemonDiv.appendChild(h2)
-	nuvarandeTeamDiv.appendChild(pokemonDiv);
-}
-
-
-function removeFromLocalStorage(pokemonData){
-	const pokemonLista = pokemonLista.filter(pokemon => pokemon.nickname != pokemonData.nickname)
-
-	localStorage.setItem('pokemonlista', JSON.stringify(updatedList));
-}

@@ -2,7 +2,7 @@ let img = document.createElement('img')
 let abilities = [];
  //import {maxTeam, addToTeam, displayTeam, displayReserve, membersPokemon, ReservPokemons} from "./functionButtons.js"
 
-// För att returnera endast små bokstäver!
+// För att returnera endast små,stora bokstäver!
 function normalizeName(name) {
   return name.toLowerCase();
 }
