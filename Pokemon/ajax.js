@@ -96,15 +96,6 @@ async function displayPokemon(pokemonList) {
     const championPokemonDiv = document.createElement('div');
     championPokemonDiv.classList.add('pokemon-enter');
 
-    const addButton = document.createElement('button');
-    addButton.classList.add('add-champion-button');
-    addButton.textContent = 'Add to Team';
-    addButtonList.push(addButton);
-
-    addButton.addEventListener('click', async function () {
-      addChampionToTeam(pokemonData);
-	  moveChampionsToReserve()
-    });
 
     const uniqueId = pokemonData.name.toLowerCase();
     championPokemonDiv.setAttribute('id', uniqueId);

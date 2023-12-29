@@ -19,18 +19,6 @@ export function addToTeam(pokemonData) {
 	console.log('slutet av addtoteam functionen');
 }
 
-
-export function addPokemonToTeamDOM(pokemonData) {
-	const myTeamDiv = document.querySelector('.my-team');
-	const championPokemonDiv = createPokemonDiv(pokemonData);
-	
-	const nicknameInput = createNicknameInput();
-	const confirmButton = createConfirmButton(pokemonData, nicknameInput);
-	
-	championPokemonDiv.appendChild(nicknameInput);
-	championPokemonDiv.appendChild(confirmButton);
-	myTeamDiv.appendChild(championPokemonDiv);
-}
 //my-team div
 export function createPokemonDiv(pokemonData) {
 	const championPokemonDiv = document.createElement('div');
@@ -54,12 +42,7 @@ export function createNicknameInput() {
 	return nicknameInput;
 }
 
-export function createConfirmButton(pokemonData, nicknameInput) {
-	const confirmButton = document.createElement('button');
-	confirmButton.textContent = 'Confirm nickname';
-	confirmButton.addEventListener('click', () => handleConfirmNickname(pokemonData, nicknameInput));
-	return confirmButton;
-}
+
 
 document.addEventListener("DOMContentLoaded", async function () {
 	displayTeam()
@@ -100,49 +83,9 @@ export function displayTeam() {
 		kickButton.addEventListener('click', () => handleKickFromTeam(index));
 		pokemonDiv.appendChild(kickButton);
 		
-		const addToTeamButton = document.createElement('button');
-		addToTeamButton.classList.add('addToTeam');
-		addToTeamButton.textContent = 'Add to Team';
-		addToTeamButton.addEventListener('click', () => {
-			if(membersPokemon.length < maxTeam) {
-				addToTeam(pokemonData)	
-			}else{
-				console.log('Team is completed')
-			}
-		});
-		pokemonDiv.appendChild(addToTeamButton)
-		
-		
-		const smeknamnDiv = document.createElement('div');
-		smeknamnDiv.classList.add('smeknamn');
-		
-		const label = document.createElement('label');
-		label.textContent = 'Change name';
-		smeknamnDiv.appendChild(label);
-		
-		const inputNickname = document.createElement('input');
-		inputNickname.type = 'text';
-		inputNickname.placeholder = 'Change nickname';
-		inputNickname.value = pokemonData.nickname || '';
-		smeknamnDiv.appendChild(inputNickname);
-		
-		
-		const confirmButton = document.createElement('button');
-		confirmButton.classList.add('confirm');
-		confirmButton.textContent = 'Confirm nickname';
-		confirmButton.addEventListener('click', () => handleConfirmNickname(index));
-		
-		smeknamnDiv.appendChild(confirmButton);
-		pokemonDiv.appendChild(smeknamnDiv);
 		pokemonParent.appendChild(pokemonDiv);
 		myTeamDiv.appendChild(pokemonParent);
 	}); 
-	/* if (ReservPokemons && ReservPokemons.length > 0) {
-		const firstReservPokemon = ReservPokemons.shift();
-		membersPokemon.push(firstReservPokemon);
-		console.log('första reservpokemon', firstReservPokemon);
-		displayReserve();
-	}   */
 }
 function CreateForReservDiv(pokemonData) {
 	const championPokemonDiv = document.createElement('div');
@@ -165,12 +108,16 @@ export function displayReserve() {
 	reservDiv.innerHTML = '';
 	const h2 = document.createElement('h2');
 	h2.textContent = 'Reserv Pokemons';
-	reservDiv.appendChild(h2)
+	reservDiv.appendChild(h2);
+	let pokemonParent = document.createElement('div');
+	pokemonParent.classList.add('flex');
+	
 	
 	ReservPokemons.forEach((pokemonData, index) => {
 		console.log('Reserv Pokemon Data:', pokemonData);
 		let reservPokemonDiv = CreateForReservDiv(pokemonData);
 		console.log('Reserv Pokemon Div:', reservPokemonDiv);
-		reservDiv.appendChild(reservPokemonDiv);
+		pokemonParent.appendChild(reservPokemonDiv);
 	});
+	reservDiv.appendChild(pokemonParent);
 } 

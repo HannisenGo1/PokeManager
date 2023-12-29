@@ -1,13 +1,10 @@
 import { getPokemon, fetchPokemonData, displayPokemon, normalizeName } from "./ajax.js";
-import{displayTeam, membersPokemon, ReservPokemons, addToTeam} from "./storage.js"
+import{displayTeam, membersPokemon, ReservPokemons, addToTeam, displayReserve} from "./storage.js"
 
 
 const searchInput = document.getElementById('searchInput');
 const searchButton = document.getElementById('searchbutton');
 const searchForPokemonDiv = document.querySelector('.searchForPokemonDiv');
-const addPokemonButton = document.querySelector('.addPokemonsbutton');
-const pokemonInfoDiv = document.getElementById('pokemonInfo');
-const kickFromTeamBtn = document.querySelector('.kickHere');
 export const maxTeam = 3;
 
 searchForPokemonDiv.classList.add('hidden');
@@ -39,15 +36,9 @@ document.addEventListener("DOMContentLoaded", async function () {
     for (const addButton of addButtonList) {
       addButton.addEventListener('click', async function () {
         const index = addButtonList.indexOf(addButton);
-        console.log('Button clicked at index:', index);
-
         if (index !== -1) {
           const selectedPokemon = pokemonList[index];
-          console.log('Selected Pokemon:', selectedPokemon);
-
           await fetchPokemonData([selectedPokemon]);
-          console.log('Fetched Pokemon data for selected Pokemon.');
-
           addpokemonToTeam();
         }
       });
@@ -68,16 +59,13 @@ async function handlesearch() {
       const normalized = normalizeName(pokemon.name);
       return normalized.includes(name);
     });
-    console.log('Filter result:', filterPokemon);
 
     if (filterPokemon.length > 0) {
-      console.log('Filtered Pokemon:', filterPokemon);
       // Rensa tidigare resultat
       searchForPokemonDiv.innerHTML = '';
       // Hämta data för alla matchande Pokemon
       await fetchPokemonData(filterPokemon);
     } else {
-      console.log('No matching Pokemon found');
       searchForPokemonDiv.innerHTML = '<p>No matching Pokemon found</p>';
     }
   } catch (error) {
@@ -113,14 +101,14 @@ function handleAddClick(event) {
 export function handleKickFromTeam(index, pokemonData) {
   const kickedPokemon = membersPokemon.splice(index, 1)[0];
  if (ReservPokemons != null && ReservPokemons.length >0) {
-// Ta första från reservlistan och lägga till i memberspokemon
-// Ta bort från reservlistan, och ladda om reservlistans content
+	const firstReservPokemon = ReservPokemons[0];
+	membersPokemon.push(firstReservPokemon);
+	ReservPokemons.splice(0,1)
+	displayReserve();
  }
 
 
-
   displayTeam()
-  console.log(`moved ${kickedPokemon.nickname || kickedPokemon.name} out.`)
   try {
 
 } catch (error) {

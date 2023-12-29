@@ -54,11 +54,6 @@ font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 	border: 1px solid black;
 }
 
-.flex{
-	display: flex;
-}
-
-
 
 .pokemon-enter , .pokemon-enter2 >.image {
 	width: 100%;

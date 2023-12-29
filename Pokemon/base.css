@@ -116,7 +116,7 @@ body {
 	background-color: whitesmoke;
 }
 
-.searchForPokemonDiv{
+.searchForPokemonDiv, .flex{
 	display:flex;
 	flex-wrap: wrap;
 	justify-content: center;
